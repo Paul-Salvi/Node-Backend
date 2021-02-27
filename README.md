@@ -1,2 +1,7 @@
 # Node-Backend
-Web apis and MySQL Integration 
+Web apis JWT Authentication and MySQL Integration 
+
+## Included (Data folder)
+
+1. Postman collection 
+2. SQL Scripts
