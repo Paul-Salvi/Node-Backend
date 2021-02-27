@@ -1,5 +1,6 @@
 'use strict';
-var dbConnection = require('../configs/db.config');
+const jwt = require('../security/jwt');
+const Crypt = require('../security/encryption');
 const User = require('../models/user.model');
 
 var Credentials = function (credential) {
@@ -12,20 +13,21 @@ var Credentials = function (credential) {
 
 Credentials.login = function (credentials, result) {
    if (!credentials.email || !credentials.password) {
-      var errMsg = "Invalid credentials";
+      var errMsg = "Invalid credentials.";
       result(errMsg, null);
    }
    User.findByEmail(credentials.email, function (err, user) {
       if (err)
-         result("Email Id does not exist.", null);
+         return result("Email Id does not exist.", null);
 
-      console.log(user[0]);
-      result(null, "Success JWT");
-
+      if (Crypt.compare(credentials.password, user[0].password)) {
+         let payload = { username: user.username };
+         let accessToken = jwt.generate(payload);
+         console.log(accessToken);
+         return result(null, accessToken);
+      }
+      result("Invalid Password", null);
    });
 };
-
-
-
 
 module.exports = Credentials;
